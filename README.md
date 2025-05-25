@@ -1,45 +1,45 @@
-# API de Monitoreo de Sensores ESP32
+# ESP32 Sensor Monitoring API
 
-API FastAPI para el sistema de monitoreo de sensores ESP32. Esta API permite:
-- Registrar y gestionar sensores
-- Almacenar lecturas de sensores
-- Procesar datos con Llama 3.2
-- Consultar resultados de análisis
+FastAPI for the ESP32 sensor monitoring system. This API allows:
+- Register and manage sensors
+- Store sensor readings
+- Process data with Llama 3.2
+- Query analysis results
 
-## Estructura del Proyecto
+## Project Structure
 
 ```
 api/
-├── app/              # Código principal de la API
-│   ├── core/         # Configuraciones centrales
-│   ├── db/           # Configuración de base de datos
-│   ├── models/       # Modelos SQLAlchemy
-│   ├── routers/      # Endpoints de la API
-│   ├── schemas/      # Esquemas Pydantic
-│   └── main.py       # Punto de entrada de la API
-├── .env             # Variables de entorno
-├── docker-compose.yml # Configuración de Docker Compose
-├── Dockerfile       # Configuración de Docker
-├── requirements.txt  # Dependencias del proyecto
-└── run.py           # Script para ejecutar la API
+├── app/              # Main API code
+│   ├── core/         # Core configurations
+│   ├── db/           # Database configuration
+│   ├── models/       # SQLAlchemy models
+│   ├── routers/      # API endpoints
+│   ├── schemas/      # Pydantic schemas
+│   └── main.py       # API entry point
+├── .env             # Environment variables
+├── docker-compose.yml # Docker Compose configuration
+├── Dockerfile       # Docker configuration
+├── requirements.txt  # Project dependencies
+└── run.py           # Script to run the API
 ```
 
-## Requisitos
+## Requirements
 
 - Docker
-- PostgreSQL instalado y corriendo
-- Ollama instalado y corriendo con el modelo llama2
+- PostgreSQL installed and running
+- Ollama installed and running with llama2 model
 
-## Instalación
+## Installation
 
-### Usando Docker (Recomendado)
+### Using Docker (Recommended)
 
-1. Descargar la imagen:
+1. Download the image:
 ```bash
 docker pull difermon09/pi1-api:latest
 ```
 
-2. Crear un archivo `docker-compose.yml`:
+2. Create a `docker-compose.yml` file:
 ```yaml
 services:
   api:
@@ -56,26 +56,26 @@ services:
       - OLLAMA_MODEL=llama2
 ```
 
-3. Iniciar la API:
+3. Start the API:
 ```bash
 docker-compose up
 ```
 
-### Desarrollo Local
+### Local Development
 
-1. Crear un entorno virtual:
+1. Create a virtual environment:
 ```bash
 python -m venv venv
 source venv/bin/activate  # Linux/Mac
 venv\Scripts\activate     # Windows
 ```
 
-2. Instalar dependencias:
+2. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-3. El archivo `.env` ya está incluido en el repositorio con la configuración por defecto:
+3. The `.env` file is already included in the repository with default configuration:
 ```
 POSTGRES_SERVER=localhost
 POSTGRES_USER=admin
@@ -85,17 +85,17 @@ OLLAMA_HOST=http://localhost:11434
 OLLAMA_MODEL=llama2
 ```
 
-4. Ejecutar la API:
+4. Run the API:
 ```bash
 python run.py
 ```
 
-### Limpieza de la Base de Datos
+### Database Cleanup
 
-El proyecto incluye un script `clear_db.py` para limpiar y reinicializar la base de datos. Este script es útil en dos escenarios:
+The project includes a `clear_db.py` script to clean and reinitialize the database. This script is useful in two scenarios:
 
-#### Durante el Desarrollo
-Si estás desarrollando localmente y necesitas reiniciar la base de datos:
+#### During Development
+If you're developing locally and need to reset the database:
 ```bash
 # Windows
 cd api\app\db
@@ -106,66 +106,66 @@ cd api/app/db
 python clear_db.py
 ```
 
-#### En Producción (Docker)
-Si estás usando la imagen Docker y necesitas limpiar la base de datos:
+#### In Production (Docker)
+If you're using the Docker image and need to clean the database:
 ```bash
-# Entrar al contenedor
+# Enter the container
 docker exec -it pi1-db-1 psql -U admin -d sensor_data
 
-# Dentro de psql, ejecutar:
+# Inside psql, execute:
 DROP TABLE IF EXISTS tag_readings CASCADE;
 DROP TABLE IF EXISTS tag_sensors CASCADE;
 DROP TABLE IF EXISTS enviroment_readings CASCADE;
 DROP TABLE IF EXISTS enviroment_sensors CASCADE;
 DROP TABLE IF EXISTS data_analysis CASCADE;
 
-# Salir de psql
+# Exit psql
 \q
 ```
 
-El script `clear_db.py`:
-- Elimina todas las tablas existentes
-- Recrea las tablas con sus estructuras originales
-- Reinicia las secuencias de IDs a 1
-- Es útil para pruebas y desarrollo
+The `clear_db.py` script:
+- Deletes all existing tables
+- Recreates tables with their original structures
+- Resets ID sequences to 1
+- Useful for testing and development
 
 ## Endpoints
 
-- `GET /`: Página de bienvenida
-- `GET /docs`: Documentación de la API
-- `POST /enviroment_readings/`: Crear una lectura de sensor
-- `GET /enviroment_readings/sensors/`: Listar sensores
-- `POST /tag_readings/`: Crear una lectura de tag
-- `GET /tag_readings/`: Listar lecturas de tags
+- `GET /`: Welcome page
+- `GET /docs`: API documentation
+- `POST /enviroment_readings/`: Create a sensor reading
+- `GET /enviroment_readings/sensors/`: List sensors
+- `POST /tag_readings/`: Create a tag reading
+- `GET /tag_readings/`: List tag readings
 
-## Ejemplos
+## Examples
 
-### Crear una lectura de sensor
+### Create a sensor reading
 ```bash
 curl -X POST "http://localhost:8000/enviroment_readings/" \
      -H "Content-Type: application/json" \
      -d '{"sensor_id": 1, "value": 25.5}'
 ```
 
-### Listar sensores
+### List sensors
 ```bash
 curl "http://localhost:8000/enviroment_readings/sensors/"
 ```
 
-## Solución de Problemas
+## Troubleshooting
 
-1. **Si PostgreSQL no se conecta**
-   - Verificar que PostgreSQL esté corriendo
-   - Comprobar que el usuario y contraseña son correctos
-   - Verificar que la base de datos `sensor_data` existe
+1. **If PostgreSQL doesn't connect**
+   - Verify PostgreSQL is running
+   - Check that username and password are correct
+   - Verify that the `sensor_data` database exists
 
-2. **Si Ollama no responde**
-   - Verificar que Ollama esté corriendo
-   - Comprobar que el modelo llama2 está instalado
-   - Verificar que el puerto 11434 está disponible
+2. **If Ollama doesn't respond**
+   - Verify Ollama is running
+   - Check that llama2 model is installed
+   - Verify port 11434 is available
 
-## Contacto
+## Contact
 
-Para soporte o preguntas, contacta con:
+For support or questions, contact:
 - GitHub: [difermon09](https://github.com/difermon09)
 - Docker Hub: [difermon09](https://hub.docker.com/u/difermon09) 
