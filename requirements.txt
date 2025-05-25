@@ -1,0 +1,10 @@
+# Para poder hacer pip install -r requirements.txt y instalar todas las librerias de golpe
+# Lo de la derecha es la version a instalar
+fastapi==0.109.2
+uvicorn==0.27.1
+sqlalchemy==2.0.25
+pydantic==2.6.1
+httpx==0.25.2
+python-dotenv==1.0.1
+python-multipart==0.0.6
+asyncpg==0.29.0

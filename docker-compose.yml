@@ -1,0 +1,13 @@
+services:
+  api:
+    image: difermon09/pi1-api:latest
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_SERVER=localhost
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=sensor_data
+      - OLLAMA_HOST=http://localhost:11434
+      - OLLAMA_MODEL=llama2
